@@ -15,11 +15,12 @@ public class StageManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI remainedMosquitoCountTxt;
     [SerializeField] private TextMeshProUGUI killCountTxt;
     private int killCount;
-
+    private bool isCleared;
 
     private void Awake()
     {
         killCount = 0;
+        isCleared = false;
         int remainedMosquitoCount = Mathf.Clamp(stageInfo.RequiredMosquitoCount - killCount, 0, stageInfo.RequiredMosquitoCount);
         remainedMosquitoCountTxt.text = $"Required Mosquito Count : {remainedMosquitoCount}";
         killCountTxt.text = $"Kill Count : {killCount}";
@@ -109,8 +110,12 @@ public class StageManager : MonoBehaviour
         int remainedMosquitoCount = Mathf.Clamp(stageInfo.RequiredMosquitoCount - killCount, 0, stageInfo.RequiredMosquitoCount);
         remainedMosquitoCountTxt.text = $"Required Mosquito Count : {remainedMosquitoCount}";
         killCountTxt.text = $"Kill Count : {killCount}";
-        if (killCount >= stageInfo.RequiredMosquitoCount)
+        if (killCount >= stageInfo.RequiredMosquitoCount && !isCleared)
+        {
+            isCleared = true ;
+            GameManager.Instance.GameClear();
             Debug.Log("Stage Clear!");
+        }
     }
 
     private void RespawnMosquito(GameObject mosquitoObj)

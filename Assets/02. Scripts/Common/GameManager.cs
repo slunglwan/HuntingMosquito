@@ -37,6 +37,16 @@ public class GameManager : Singleton<GameManager>
         Application.Quit();
     }
 
+    public void GameClear()
+    {
+        // 클리어 화면 띄우기
+        var clearPanelPrefab = Resources.Load<GameObject>("[Panel] StageClear");
+        var clearPanelObject = Instantiate(clearPanelPrefab, canvas.transform);
+        var clearPanelController = clearPanelObject.GetComponent<StageClearPanelController>();
+
+        clearPanelController.Show();
+    }
+
     private IEnumerator LoadSceneASyncCoroutine(ESceneName sceneName)
     {
         // 로딩 화면 띄우기
@@ -70,7 +80,7 @@ public class GameManager : Singleton<GameManager>
 
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        //canvas = GetCanvas();
+        canvas = GetCanvas();
 
         //switch (scene.name)
         //{
