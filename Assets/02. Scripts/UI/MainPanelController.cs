@@ -1,27 +1,30 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using static Constants;
 
 public class MainPanelController : MonoBehaviour
 {
-    [SerializeField] private Button gameStartButton;
+    [SerializeField] private Button stageSelectButton;
     [SerializeField] private Button quitButton;
+    [SerializeField] private GameObject stageSelectPanel;
 
     private void OnEnable()
     {
-        gameStartButton.onClick.AddListener(LoadStage01);
+        stageSelectPanel.SetActive(false);
+        stageSelectButton.onClick.AddListener(OpenStageSelectPanel);
         quitButton.onClick.AddListener(QuitGame);
     }
 
     private void OnDisable()
     {
-        gameStartButton?.onClick.RemoveListener(LoadStage01);
+        stageSelectPanel.SetActive(false);
+        stageSelectButton?.onClick.RemoveListener(OpenStageSelectPanel);
         quitButton?.onClick.RemoveListener(QuitGame);
     }
 
-    private void LoadStage01()
+    private void OpenStageSelectPanel()
     {
-        GameManager.Instance.LoadScene(ESceneName.Stage01);
+        stageSelectPanel.SetActive(true);
     }
 
     private void QuitGame()

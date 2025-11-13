@@ -1,12 +1,12 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using static Constants;
 
 public class EnemyStateMove : EnemyState, ICharacterState
 {
-    private float runSpeed = 2f;
-    private float walkSpeed = 1f;
+    private float runSpeed = 3f;
+    private float walkSpeed = 1.5f;
 
     public EnemyStateMove(EnemyController enemyController, Animator animator, NavMeshAgent agent, Transform target)
         : base(enemyController, animator, agent, target) { }
@@ -16,7 +16,7 @@ public class EnemyStateMove : EnemyState, ICharacterState
         agent.isStopped = false;
         animator.SetBool(EnemyAniParamMove, true);
         animator.SetFloat(EnemyAniParamSpeedMultiflier, walkSpeed);
-        stateRoutine = enemyController.StartCoroutine(StateCoroutine());
+        stateRoutine = _enemyController.StartCoroutine(StateCoroutine());
     }
 
     public void Exit()
@@ -32,47 +32,47 @@ public class EnemyStateMove : EnemyState, ICharacterState
     {
         while (true)
         {
-            var sqrDistance = (enemyController.transform.position - target.position).sqrMagnitude;
+            var sqrDistance = (_enemyController.transform.position - target.position).sqrMagnitude;
 
-            if (enemyController.DetectionTargetInCircle(enemyController.RunDistance))
+            if (_enemyController.DetectionTargetInCircle(_enemyController.RunDistance))
             {
                 animator.SetFloat(EnemyAniParamSpeedMultiflier, runSpeed);
                 agent.speed = runSpeed;
-                enemyController.IsSafe = false;
+                _enemyController.IsSafe = false;
                 SetFleeDestination();
             }
-            else if (enemyController.DetectionTargetInCircle(enemyController.PlayerDetectionDistance))
+            else if (_enemyController.DetectionTargetInCircle(_enemyController.PlayerDetectionDistance))
             {
                 animator.SetFloat(EnemyAniParamSpeedMultiflier, walkSpeed);
                 agent.speed = walkSpeed;
-                enemyController.IsSafe = false;
+                _enemyController.IsSafe = false;
                 SetFleeDestination();
             }
 
             // Move >> Idle
-            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance && _enemyController.IsSafe)
             {
-                enemyController.SetState(EEnemyState.Idle);
+                _enemyController.SetState(EEnemyState.Idle);
                 yield break;
             }
 
-            if (sqrDistance > enemyController.SafeDistance * enemyController.SafeDistance && !enemyController.IsSafe)
+            if (sqrDistance > _enemyController.SafeDistance * _enemyController.SafeDistance && !_enemyController.IsSafe)
             {
-                enemyController.IsSafe = true;
-                enemyController.SetState(EEnemyState.Idle);
+                _enemyController.IsSafe = true;
+                _enemyController.SetState(EEnemyState.Idle);
                 yield break;
             }
 
-            yield return new WaitForSeconds(coolDownTime);
+            yield return new WaitForSeconds(_coolDownTime);
         }
     }
 
     private void SetFleeDestination()
     {
-        var fleeDir = enemyController.transform.position - target.position;
+        var fleeDir = _enemyController.transform.position - target.position;
         fleeDir += new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(-0.3f, 0.3f));
         fleeDir.Normalize();
-        var newPos = enemyController.transform.position + fleeDir.normalized * enemyController.SafeDistance;
+        var newPos = _enemyController.transform.position + fleeDir.normalized * _enemyController.SafeDistance;
 
         NavMeshHit hit;
         if (NavMesh.SamplePosition(newPos, out hit, 3f, NavMesh.AllAreas))

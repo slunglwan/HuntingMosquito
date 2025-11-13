@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageInfo
   RequiredMosquitoCount: 100
   StageState: 0
-  MosquitoPoolSize: 150
+  MosquitoPoolSize: 450
   mapMin: {x: -120, y: -120}
   mapMax: {x: 120, y: 120}
+  MinSpawnRadius: 40
+  MaxSpawnRadius: 50
+  MaxSpawnAttempts: 30

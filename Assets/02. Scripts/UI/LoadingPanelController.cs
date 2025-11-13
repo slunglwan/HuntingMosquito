@@ -1,4 +1,4 @@
-using DG.Tweening;
+﻿using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,6 +30,6 @@ public class LoadingPanelController : MonoBehaviour
     public void Hide(Action onComplete)
     {
         SetProgress(1f);
-        canvasGroup.DOFade(0f, 0.2f).OnComplete(() => onComplete?.Invoke());
+        canvasGroup.DOFade(0f, 0.3f).OnComplete(() => onComplete?.Invoke());
     }
 }

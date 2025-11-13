@@ -97,3 +97,22 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+Build.zip
+WebBuild/index.html
+WebBuild/Build/WebBuild.data.br
+WebBuild/Build/WebBuild.wasm.br
+WebBuild/HuntingMosquitoWeb.zip
+WebBuild/TemplateData/style.css
+WebBuild/Build/WebBuild.loader.js
+WebBuild/TemplateData/favicon.ico
+WebBuild/TemplateData/webmemd-icon.png
+WebBuild/Build/WebBuild.framework.js.br
+WebBuild/TemplateData/MemoryProfiler.png
+WebBuild/TemplateData/unity-logo-dark.png
+WebBuild/TemplateData/unity-logo-light.png
+WebBuild/TemplateData/fullscreen-button.png
+WebBuild/TemplateData/progress-bar-full-dark.png
+WebBuild/TemplateData/progress-bar-empty-dark.png
+WebBuild/TemplateData/progress-bar-full-light.png
+WebBuild/TemplateData/unity-logo-title-footer.png
+WebBuild/TemplateData/progress-bar-empty-light.png

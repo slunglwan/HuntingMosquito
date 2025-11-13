@@ -1,30 +1,31 @@
-using static Constants;
+﻿using static Constants;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerState
 {
-    protected PlayerController playerController;
-    protected Animator animator;
-    protected PlayerInput playerInput;
+    protected PlayerController _playerController;
+    protected Animator _animator;
+    protected PlayerInput _playerInput;
 
     public PlayerState(PlayerController playerController, Animator animator, PlayerInput playerInput)
     {
-        this.playerController = playerController;
-        this.animator = animator;
-        this.playerInput = playerInput;
+        _playerController = playerController;
+        _animator = animator;
+        _playerInput = playerInput;
     }
 
     protected void Attack(InputAction.CallbackContext context)
     {
-        playerController.SetState(EPlayerState.Attack);
+        if (GameManager.Instance.GameState != EGameState.Play) return;
+        _playerController.SetState(EPlayerState.Attack);
     }
 
     protected void Rotate(float x, float z)
     {
-        if (playerInput.camera != null)
+        if (_playerInput.camera != null)
         {
-            var cameraTransform = playerInput.camera.transform;
+            var cameraTransform = _playerInput.camera.transform;
             var cameraForward = cameraTransform.forward;
             var cameraRight = cameraTransform.right;
 
@@ -36,7 +37,7 @@ public class PlayerState
             if (moveDirection != Vector3.zero)
             {
                 moveDirection.Normalize();
-                playerController.transform.rotation = Quaternion.LookRotation(moveDirection);
+                _playerController.transform.rotation = Quaternion.LookRotation(moveDirection);
             }
         }
     }

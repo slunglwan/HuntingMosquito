@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using static Constants;
@@ -13,7 +13,7 @@ public class EnemyStateDead : EnemyState, ICharacterState
         animator.SetTrigger(EnemyAniParamDead);
         agent.updatePosition = false;
         agent.updateRotation = false;
-        enemyController.GetComponent<Collider>().enabled = false;
+        _enemyController.GetComponent<Collider>().enabled = false;
     }
 
     public void Exit()

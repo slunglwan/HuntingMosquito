@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -20,11 +20,11 @@ public class EnemyController : MonoBehaviour, IPoolable
     [SerializeField] private float patrolDistance = 10f;
     [SerializeField] private LayerMask detectionTargetLayerMask;
 
-    // ÄÄÆ÷³ÍÆ® Ä³½Ì
+    // ì»´í¬ë„ŒíŠ¸ ìºì‹±
     private Animator animator;
     private NavMeshAgent agent;
 
-    // »óÅÂ Á¤º¸
+    // ìƒíƒœ ì •ë³´
     public EEnemyState State {  get; private set; }
     private float hp = 50;
     private float curHp;
@@ -32,7 +32,7 @@ public class EnemyController : MonoBehaviour, IPoolable
     private readonly Collider[] detectionResults = new Collider[1];
     public static event Action<GameObject> OnMosquitoKilled;
 
-    // AI °ü·Ã
+    // AI ê´€ë ¨
     public float ActionWaitTime => actionWaitTime;
     public float MoveChance => moveChance;
     public float IdleChance => idleChance;
@@ -45,19 +45,18 @@ public class EnemyController : MonoBehaviour, IPoolable
 
     private void Awake()
     {
-        // ÄÄÆ÷³ÍÆ® ÃÊ±âÈ­
+        // ì»´í¬ë„ŒíŠ¸ ì´ˆê¸°í™”
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
 
-        // NavMeshAgent ¼³Á¤
+        // NavMeshAgent ì„¤ì •
         agent.updatePosition = true;
         agent.updateRotation = true;
 
-        // ÇÃ·¹ÀÌ¾î ÇÒ´ç
+        // í”Œë ˆì´ì–´ í• ë‹¹
         var target = GameObject.FindGameObjectWithTag("Player");
-        Debug.Log($"Å¸°Ù ¹ß°ß {target.name}");
 
-        // »óÅÂ ¼³Á¤
+        // ìƒíƒœ ì„¤ì •
         curHp = hp;
         var enemyStateIdle = new EnemyStateIdle(this, animator, agent, target.transform);
         var enemyStateMove = new EnemyStateMove(this, animator, agent, target.transform);
@@ -98,15 +97,15 @@ public class EnemyController : MonoBehaviour, IPoolable
 
     private void OnDrawGizmos()
     {
-        // °¨Áö ¹üÀ§
+        // ê°ì§€ ë²”ìœ„
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, playerDetectionDistance);
 
-        // ´Ş¸®±â °áÁ¤ °¨Áö ¹üÀ§
+        // ë‹¬ë¦¬ê¸° ê²°ì • ê°ì§€ ë²”ìœ„
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, runDistance);
 
-        // Agent ¸ñÀûÁö Ç¥½Ã
+        // Agent ëª©ì ì§€ í‘œì‹œ
         if (agent != null && agent.hasPath)
         {
             Gizmos.color = Color.blue;
@@ -120,19 +119,19 @@ public class EnemyController : MonoBehaviour, IPoolable
         int count = Physics.OverlapSphereNonAlloc(transform.position, distance, detectionResults, detectionTargetLayerMask);
 
         bool detected = count > 0;
-        Array.Clear(detectionResults, 0, count); // Å½Áö ÈÄ Ä³½Ã ÃÊ±âÈ­
+        Array.Clear(detectionResults, 0, count); // íƒì§€ í›„ ìºì‹œ ì´ˆê¸°í™”
         return detected;
     }
 
     public void SetHit(int damage)
     {
-        if (State == EEnemyState.Dead) return; // ÀÌ¹Ì »ç¸ÁÇÑ °æ¿ì ¹«½Ã
+        if (State == EEnemyState.Dead) return; // ì´ë¯¸ ì‚¬ë§í•œ ê²½ìš° ë¬´ì‹œ
 
         curHp -= damage;
         if (curHp <= 0)
         {
-            OnMosquitoKilled?.Invoke(gameObject);
             SetState(EEnemyState.Dead);
+            OnMosquitoKilled?.Invoke(gameObject);
         }
         else
             SetState(EEnemyState.Hit);
@@ -140,7 +139,7 @@ public class EnemyController : MonoBehaviour, IPoolable
 
     public void OnSpawned(Vector3 spawnPos)
     {
-        // NavMesh ¾ÈÀü ¹èÄ¡(¾Æ·¡ Âü°í) 
+        // NavMesh ì•ˆì „ ë°°ì¹˜(ì•„ë˜ ì°¸ê³ ) 
         PlaceOnNavMesh(spawnPos);
         curHp = hp;
         agent.updatePosition = true;
@@ -160,7 +159,7 @@ public class EnemyController : MonoBehaviour, IPoolable
     }
 
     /// <summary>
-    /// ½ºÆù ÁÂÇ¥°¡ NavMeshÀ§¿¡ ÀÖµµ·Ï ÁöÁ¤ÇÏ´Â ÇÔ¼ö
+    /// ìŠ¤í° ì¢Œí‘œê°€ NavMeshìœ„ì— ìˆë„ë¡ ì§€ì •í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     /// <param name="spawnPos"></param>
     private void PlaceOnNavMesh(Vector3 spawnPos)
@@ -168,7 +167,7 @@ public class EnemyController : MonoBehaviour, IPoolable
         NavMeshHit hit;
         if (NavMesh.SamplePosition(spawnPos, out hit, 2f, NavMesh.AllAreas))
         {
-            // agent°¡ È°¼ºÈ­µÈ »óÅÂ¶ó¸é Warping ±ÇÀå
+            // agentê°€ í™œì„±í™”ëœ ìƒíƒœë¼ë©´ Warping ê¶Œì¥
             if (agent != null && agent.isOnNavMesh)
                 agent.Warp(hit.position);
             else
@@ -176,7 +175,7 @@ public class EnemyController : MonoBehaviour, IPoolable
         }
         else
         {
-            // »ùÇÃ ½ÇÆĞ ½Ã fallback
+            // ìƒ˜í”Œ ì‹¤íŒ¨ ì‹œ fallback
             transform.position = spawnPos;
         }
     }

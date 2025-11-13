@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public static class Constants
 {
     public const float Gravity = -9.81f;
 
     /// <summary>
-    /// ½ºÅ×ÀÌÁö Á¤º¸
+    /// ìŠ¤í…Œì´ì§€ ì •ë³´
     /// </summary>
     public enum EStageState
     {
@@ -13,14 +13,7 @@ public static class Constants
     }
 
     /// <summary>
-    /// ¹ú·¹ ½ºÆù °ü·Ã Á¤º¸
-    /// </summary>
-    public static readonly float MinSpawnRadius = 40f;
-    public static readonly float MaxSpawnRadius = 50f;
-    public static readonly int MaxSpawnAttempts = 30;
-
-    /// <summary>
-    /// ½Å ÀÌ¸§
+    /// ì‹  ì´ë¦„
     /// </summary>
     public enum ESceneName
     {
@@ -28,15 +21,15 @@ public static class Constants
     }
 
     /// <summary>
-    /// °ÔÀÓ »óÅÂ
+    /// ê²Œì„ ìƒíƒœ
     /// </summary>
     public enum EGameState
     {
-        None, Play, Pause
+        None, Play, Pause, Ready, Clear
     }
 
     /// <summary>
-    /// ¸ğ±âµéÀÇ »óÅÂ Á¤º¸
+    /// ëª¨ê¸°ë“¤ì˜ ìƒíƒœ ì •ë³´
     /// </summary>
     public enum EEnemyState
     {
@@ -44,7 +37,7 @@ public static class Constants
     }
 
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾îÀÇ »óÅÂ Á¤º¸
+    /// í”Œë ˆì´ì–´ì˜ ìƒíƒœ ì •ë³´
     /// </summary>
     public enum EPlayerState
     {
@@ -52,7 +45,7 @@ public static class Constants
     }
 
     /// <summary>
-    /// Enemy ¾Ö´Ï¸ŞÀÌÅÍ ÆÄ¶ó¹ÌÅÍ
+    /// Enemy ì• ë‹ˆë©”ì´í„° íŒŒë¼ë¯¸í„°
     /// </summary>
     public static readonly int EnemyAniParamIdle = Animator.StringToHash("idle");
     public static readonly int EnemyAniParamMove = Animator.StringToHash("move");
@@ -63,12 +56,14 @@ public static class Constants
     public static readonly int EnemyAniParamSpeedMultiflier = Animator.StringToHash("speed_multiflier");
 
     /// <summary>
-    /// Player ¾Ö´Ï¸ŞÀÌÅÍ ÆÄ¶ó¹ÌÅÍ
+    /// Player ì• ë‹ˆë©”ì´í„° íŒŒë¼ë¯¸í„°
     /// </summary>
     public static readonly int PlayerAniParamIdle = Animator.StringToHash("idle");
     public static readonly int PlayerAniParamMove = Animator.StringToHash("move");
-    public static readonly int PlayerAniParamAttack = Animator.StringToHash("attack");
+    public static readonly int PlayerAniParamPunch = Animator.StringToHash("punch");
+    public static readonly int PlayerAniParamSwing = Animator.StringToHash("swing");
     public static readonly int PlayerAniParamHit = Animator.StringToHash("hit");
     public static readonly int PlayerAniParamDead = Animator.StringToHash("dead");
     public static readonly int PlayerAniParamMoveSpeed = Animator.StringToHash("move_speed");
+    public static readonly int PlayerAniParamVictory = Animator.StringToHash("victory");
 }

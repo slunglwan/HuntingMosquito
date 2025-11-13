@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.InputSystem;
 using static Constants;
 
@@ -9,26 +9,26 @@ public class PlayerStateIdle : PlayerState, ICharacterState
 
     public void Enter()
     {
-        animator.SetBool(PlayerAniParamIdle, true);
+        _animator.SetBool(PlayerAniParamIdle, true);
 
-        // Player Input¿¡ ´ëÇÑ ¾×¼Ç ÇÒ´ç
-        playerInput.actions["Attack"].performed += Attack;
+        // Player Inputì— ëŒ€í•œ ì•¡ì…˜ í• ë‹¹
+        _playerInput.actions["Attack"].performed += Attack;
     }
 
     public void Exit()
     {
-        // Idle ¾Ö´Ï¸ŞÀÌ¼Ç Á¾·á
-        animator.SetBool(PlayerAniParamIdle, false);
+        // Idle ì• ë‹ˆë©”ì´ì…˜ ì¢…ë£Œ
+        _animator.SetBool(PlayerAniParamIdle, false);
 
-        // Player Input¿¡ ´ëÇÑ ¾×¼Ç ÇØÁ¦
-        playerInput.actions["Attack"].performed -= Attack;
+        // Player Inputì— ëŒ€í•œ ì•¡ì…˜ í•´ì œ
+        _playerInput.actions["Attack"].performed -= Attack;
     }
 
     public void Update()
     {
-        if (playerInput.actions["Move"].IsPressed())
+        if (_playerInput.actions["Move"].IsPressed())
         {
-            playerController.SetState(EPlayerState.Move);
+            _playerController.SetState(EPlayerState.Move);
         }
     }
 }

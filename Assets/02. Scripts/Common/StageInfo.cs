@@ -1,17 +1,22 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using static Constants;
 
 [CreateAssetMenu(fileName = "StageInfo", menuName = "Scriptable Objects/StageInfo")]
 public class StageInfo : ScriptableObject
 {
-    [Header("Å¬¸®¾î °ü·Ã Á¤º¸")]
+    [Header("í´ë¦¬ì–´ ê´€ë ¨ ì •ë³´")]
     public int RequiredMosquitoCount;
 
-    [Header("½ºÅ×ÀÌÁö »óÅÂ")]
+    [Header("ìŠ¤í…Œì´ì§€ ìƒíƒœ")]
     public EStageState StageState;
 
-    [Header("¸Ê ¼³Á¤")]
+    [Header("ë§µ ì„¤ì •")]
     public int MosquitoPoolSize;
     public Vector2 mapMin;
     public Vector2 mapMax;
+
+    [Header("Mosquito ìŠ¤í° ì„¤ì •")]
+    public float MinSpawnRadius;
+    public float MaxSpawnRadius;
+    public int MaxSpawnAttempts;
 }

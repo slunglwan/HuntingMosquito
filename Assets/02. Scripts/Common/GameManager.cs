@@ -1,4 +1,4 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -39,7 +39,8 @@ public class GameManager : Singleton<GameManager>
 
     public void GameClear()
     {
-        // ≈¨∏ÆæÓ »≠∏È ∂ÁøÏ±‚
+        SetGameState(EGameState.Clear);
+        // ÌÅ¥Î¶¨Ïñ¥ ÌôîÎ©¥ ÎùÑÏö∞Í∏∞
         var clearPanelPrefab = Resources.Load<GameObject>("[Panel] StageClear");
         var clearPanelObject = Instantiate(clearPanelPrefab, canvas.transform);
         var clearPanelController = clearPanelObject.GetComponent<StageClearPanelController>();
@@ -49,7 +50,7 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator LoadSceneASyncCoroutine(ESceneName sceneName)
     {
-        // ∑Œµ˘ »≠∏È ∂ÁøÏ±‚
+        // Î°úÎî© ÌôîÎ©¥ ÎùÑÏö∞Í∏∞
         var loadingPanelPrefab = Resources.Load<GameObject>("[Panel] Loading");
         var loadingPanelObject = Instantiate(loadingPanelPrefab, canvas.transform);
         var loadingPanelController = loadingPanelObject.GetComponent<LoadingPanelController>();
@@ -59,7 +60,7 @@ public class GameManager : Singleton<GameManager>
         loadingPanelController.Show(() => showDone = true);
         yield return new WaitUntil(() => showDone);
 
-        // æ¿ ∑ŒµÂ ¡¯«‡
+        // Ïî¨ Î°úÎìú ÏßÑÌñâ
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName.ToString());
         asyncOperation.allowSceneActivation = false;
 
@@ -68,43 +69,31 @@ public class GameManager : Singleton<GameManager>
             loadingPanelController.SetProgress(asyncOperation.progress);
             yield return null;
         }
-        loadingPanelController.SetProgress(1f);
         asyncOperation.allowSceneActivation = true;
 
         bool hideDone = false;
         loadingPanelController.Hide(() => hideDone = true);
+        loadingPanelController.SetProgress(1f);
         yield return new WaitUntil(() => hideDone);
 
-        Destroy(loadingPanelObject);
+
+        //Destroy(loadingPanelObject);
     }
 
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         canvas = GetCanvas();
+        SetGameState(EGameState.Ready);
 
-        //switch (scene.name)
-        //{
-        //    case "Main":
-        //        break;
-        //    case "Stage01":
-        //    case "Stage02":
-        //        var spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint").transform;
-
-        //        if (player)
-        //        {
-        //            player.SetActive(true);
-        //            player.transform.position = spawnPoint.position;
-        //            player.transform.rotation = spawnPoint.rotation;
-        //        }
-        //        else
-        //        {
-        //            player = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-        //            DontDestroyOnLoad(player);
-        //        }
-        //        break;
-        //}
-
-        //GameState = EGameState.Play;
+        switch (scene.name)
+        {
+            case "Main":
+                break;
+            default:
+                var startPanelPrefab = Resources.Load<GameObject>("[Panel] Start");
+                var startPanelObj = Instantiate(startPanelPrefab, canvas.transform);
+                break;
+        }
     }
 
     private Canvas GetCanvas()

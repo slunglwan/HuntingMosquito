@@ -1,11 +1,11 @@
-using System.Collections;
+ï»¿using System.Collections;
 using TMPro;
 using UnityEngine;
 using static Constants;
 
 public class StageManager : MonoBehaviour
 {
-    [SerializeField] private StageInfo stageInfo;
+    [SerializeField] private StageInfo _stageInfo;
     [SerializeField] private MosquitoObjectPool pool;
     [SerializeField] private GameObject player;
     [SerializeField] private float corpseKeepTime = 3f;
@@ -14,27 +14,29 @@ public class StageManager : MonoBehaviour
     [SerializeField] private LayerMask obstacleLayerMask;
     [SerializeField] private TextMeshProUGUI remainedMosquitoCountTxt;
     [SerializeField] private TextMeshProUGUI killCountTxt;
-    private int killCount;
-    private bool isCleared;
+    private int _killCount;
+    private bool _isCleared;
+
+    public static System.Action OnGameClear;
 
     private void Awake()
     {
-        killCount = 0;
-        isCleared = false;
-        int remainedMosquitoCount = Mathf.Clamp(stageInfo.RequiredMosquitoCount - killCount, 0, stageInfo.RequiredMosquitoCount);
+        _killCount = 0;
+        _isCleared = false;
+        int remainedMosquitoCount = Mathf.Clamp(_stageInfo.RequiredMosquitoCount - _killCount, 0, _stageInfo.RequiredMosquitoCount);
         remainedMosquitoCountTxt.text = $"Required Mosquito Count : {remainedMosquitoCount}";
-        killCountTxt.text = $"Kill Count : {killCount}";
+        killCountTxt.text = $"Kill Count : {_killCount}";
 
         StartCoroutine(SpawnRoutine());
     }
 
     private IEnumerator SpawnRoutine()
     {
-        for (int i = 0; i < stageInfo.MosquitoPoolSize; i++)
+        for (int i = 0; i < _stageInfo.MosquitoPoolSize; i++)
         {
             SpawnMosquito();
 
-            yield return new WaitForSeconds(totalSpawnTime / stageInfo.MosquitoPoolSize);
+            yield return new WaitForSeconds(totalSpawnTime / _stageInfo.MosquitoPoolSize);
         }
     }
 
@@ -44,37 +46,49 @@ public class StageManager : MonoBehaviour
         Vector3 playerForward = player.transform.forward;
 
 
-        Vector2 mapMin = stageInfo.mapMin;
-        Vector2 mapMax = stageInfo.mapMax;
+        Vector2 mapMin = _stageInfo.mapMin;
+        Vector2 mapMax = _stageInfo.mapMax;
+        Vector3 candidate = Vector3.zero;
 
-        for (int attempt = 0; attempt < MaxSpawnAttempts; attempt++)
+        for (int attempt = 0; attempt < _stageInfo.MaxSpawnAttempts; attempt++)
         {
-            // ±âº»ÀûÀ¸·Î ÇÃ·¹ÀÌ¾î µÚÂÊ ¹æÇâ¿¡¼­ ½Ãµµ
-            float angle = Random.Range(105f, 255f); // ÇÃ·¹ÀÌ¾î µÚÂÊ ¡¾75µµ
-            float distance = Random.Range(MinSpawnRadius, MaxSpawnRadius);
+            if (GameManager.Instance.GameState == EGameState.Play)
+            {
+                // ê¸°ë³¸ì ìœ¼ë¡œ í”Œë ˆì´ì–´ ë’¤ìª½ ë°©í–¥ì—ì„œ ì‹œë„
+                float angle = Random.Range(105f, 255f); // í”Œë ˆì´ì–´ ë’¤ìª½ Â±75ë„
+                float distance = Random.Range(_stageInfo.MinSpawnRadius, _stageInfo.MaxSpawnRadius);
 
-            // µµ³Ó ¹üÀ§ ÁÂÇ¥ °è»ê
-            Vector3 dir = Quaternion.Euler(0f, angle, 0f) * playerForward;
-            Vector3 candidate = playerPos + dir * distance;
-            candidate.y = 10f; // Raycast ½ÃÀÛ ³ôÀÌ (Áö¸é À§)
+                // ë„ë„› ë²”ìœ„ ì¢Œí‘œ ê³„ì‚°
+                Vector3 dir = Quaternion.Euler(0f, angle, 0f) * playerForward;
+                candidate = playerPos + dir * distance;
+                candidate.y = 10f; // Raycast ì‹œì‘ ë†’ì´ (ì§€ë©´ ìœ„)
 
-            // ¸Ê °æ°è Á¦ÇÑ
-            candidate.x = Mathf.Clamp(candidate.x, mapMin.x, mapMax.x);
-            candidate.z = Mathf.Clamp(candidate.z, mapMin.y, mapMax.y);
+                // ë§µ ê²½ê³„ ì œí•œ
+                candidate.x = Mathf.Clamp(candidate.x, mapMin.x, mapMax.x);
+                candidate.z = Mathf.Clamp(candidate.z, mapMin.y, mapMax.y);
+            }
+            else if (GameManager.Instance.GameState == EGameState.Ready)
+            {
+                var randomDir = Random.insideUnitCircle.normalized;
+                var randomDistance = Random.Range(_stageInfo.MinSpawnRadius, _stageInfo.MaxSpawnRadius);
 
-            // Àå¾Ö¹° À§ÀÎÁö °Ë»ç (ÁöÇü Ãæµ¹ °¨Áö)
+                candidate = playerPos + new Vector3(randomDir.x, 0f, randomDir.y) * randomDistance;
+
+            }
+
+            // ì¥ì• ë¬¼ ìœ„ì¸ì§€ ê²€ì‚¬ (ì§€í˜• ì¶©ëŒ ê°ì§€)
             if (Physics.Raycast(candidate, Vector3.down, out RaycastHit hit, 20f, groundLayerMask))
             {
                 Vector3 groundPoint = hit.point;
 
-                // ÁÖº¯¿¡ Àå¾Ö¹°ÀÌ ³Ê¹« °¡±î¿îÁö °Ë»ç
+                // ì£¼ë³€ì— ì¥ì• ë¬¼ì´ ë„ˆë¬´ ê°€ê¹Œìš´ì§€ ê²€ì‚¬
                 bool isBlocked = Physics.CheckSphere(groundPoint, 1.5f, obstacleLayerMask);
-                if (!isBlocked)                
-                    return groundPoint;                
+                if (!isBlocked)
+                    return groundPoint;
             }
         }
 
-        return playerPos + playerForward * MinSpawnRadius;
+        return playerPos + playerForward * _stageInfo.MinSpawnRadius;
     }
 
     public void SpawnMosquito()
@@ -88,7 +102,7 @@ public class StageManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Àß¸øµÈ Çü½ÄÀÇ °ÔÀÓ¿ÀºêÁ§Æ®ÀÔ´Ï´Ù.");
+            Debug.LogError("ì˜ëª»ëœ í˜•ì‹ì˜ ê²Œì„ì˜¤ë¸Œì íŠ¸ì…ë‹ˆë‹¤.");
         }
     }
 
@@ -106,13 +120,14 @@ public class StageManager : MonoBehaviour
 
     private void AddKillCount(GameObject mosquitoObj)
     {
-        killCount++;
-        int remainedMosquitoCount = Mathf.Clamp(stageInfo.RequiredMosquitoCount - killCount, 0, stageInfo.RequiredMosquitoCount);
+        _killCount++;
+        int remainedMosquitoCount = Mathf.Clamp(_stageInfo.RequiredMosquitoCount - _killCount, 0, _stageInfo.RequiredMosquitoCount);
         remainedMosquitoCountTxt.text = $"Required Mosquito Count : {remainedMosquitoCount}";
-        killCountTxt.text = $"Kill Count : {killCount}";
-        if (killCount >= stageInfo.RequiredMosquitoCount && !isCleared)
+        killCountTxt.text = $"Kill Count : {_killCount}";
+        if (_killCount >= _stageInfo.RequiredMosquitoCount && !_isCleared)
         {
-            isCleared = true ;
+            _isCleared = true ;
+            OnGameClear?.Invoke();
             GameManager.Instance.GameClear();
             Debug.Log("Stage Clear!");
         }
@@ -133,7 +148,7 @@ public class StageManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Àß¸øµÈ Çü½ÄÀÇ °ÔÀÓ¿ÀºêÁ§Æ®ÀÔ´Ï´Ù.");
+            Debug.LogError("ì˜ëª»ëœ í˜•ì‹ì˜ ê²Œì„ì˜¤ë¸Œì íŠ¸ì…ë‹ˆë‹¤.");
             yield break;
         }
         pool.ReturnObject(mosquitoObj);

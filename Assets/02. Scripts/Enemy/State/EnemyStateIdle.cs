@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using static Constants;
@@ -18,7 +18,7 @@ public class EnemyStateIdle : EnemyState, ICharacterState
         waitTime = 0f;
         agent.isStopped = true;
         animator.SetBool(EnemyAniParamIdle, true);
-        stateRoutine = enemyController.StartCoroutine(StateCoroutine());
+        stateRoutine = _enemyController.StartCoroutine(StateCoroutine());
     }
 
     public void Exit()
@@ -33,64 +33,64 @@ public class EnemyStateIdle : EnemyState, ICharacterState
     {
         while (true)
         {
-            if (enemyController.DetectionTargetInCircle(enemyController.PlayerDetectionDistance))
+            if (_enemyController.DetectionTargetInCircle(_enemyController.PlayerDetectionDistance))
             {
-                enemyController.IsSafe = false;
-                enemyController.SetState(EEnemyState.Move);
+                _enemyController.IsSafe = false;
+                _enemyController.SetState(EEnemyState.Move);
                 yield break;
             }
 
-            if (waitTime > enemyController.ActionWaitTime)
+            if (waitTime > _enemyController.ActionWaitTime)
             {
                 var randomMoveChance = Random.Range(0, 100);
                 var randomRestChance = Random.Range(0, 100);
 
 
-                if (randomMoveChance < enemyController.MoveChance && enemyController.IsSafe)
+                if (randomMoveChance < _enemyController.MoveChance && _enemyController.IsSafe)
                 {
-                    // ÀÌµ¿ ½ÃÀÛ
+                    // ì´ë™ ì‹œìž‘
                     var patrolPosition = FindRandomPatrolDestination();
 
-                    // Á¤Âû À§Ä¡°¡ Çö À§Ä¡¿¡¼­ 2Unit ÀÌ»ó ¹þ¾î³­ °æ¿ì¿¡¸¸ Á¤Âû ½ÃÀÛ
-                    var realDistance = Vector3.Magnitude(patrolPosition - enemyController.transform.position);
+                    // ì •ì°° ìœ„ì¹˜ê°€ í˜„ ìœ„ì¹˜ì—ì„œ 2Unit ì´ìƒ ë²—ì–´ë‚œ ê²½ìš°ì—ë§Œ ì •ì°° ì‹œìž‘
+                    var realDistance = Vector3.Magnitude(patrolPosition - _enemyController.transform.position);
 
                     var minimumDistance = agent.stoppingDistance + 2f;
 
                     if (realDistance > minimumDistance)
                     {
                         agent.SetDestination(patrolPosition);
-                        enemyController.SetState(EEnemyState.Move);
+                        _enemyController.SetState(EEnemyState.Move);
                         yield break;
                     }
                 }
 
-                if (randomRestChance < enemyController.RestChance && enemyController.IsSafe)
+                if (randomRestChance < _enemyController.RestChance && _enemyController.IsSafe)
                 {
-                    enemyController.SetState(EEnemyState.Rest);
+                    _enemyController.SetState(EEnemyState.Rest);
                     yield break;
                 }
 
                 waitTime = 0f;
             }
-            yield return new WaitForSeconds(coolDownTime);
-            waitTime += coolDownTime;
+            yield return new WaitForSeconds(_coolDownTime);
+            waitTime += _coolDownTime;
         }
     }
 
-    // Á¤Âû ¸ñÀûÁö¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö
+    // ì •ì°° ëª©ì ì§€ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     private Vector3 FindRandomPatrolDestination()
     {
-        Vector3 randomDirection = Random.insideUnitSphere * enemyController.PatrolDistance;
-        randomDirection += enemyController.transform.position;
+        Vector3 randomDirection = Random.insideUnitSphere * _enemyController.PatrolDistance;
+        randomDirection += _enemyController.transform.position;
 
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomDirection, out hit, enemyController.PatrolDistance, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomDirection, out hit, _enemyController.PatrolDistance, NavMesh.AllAreas))
         {
             return hit.position;
         }
         else
         {
-            return enemyController.transform.position;
+            return _enemyController.transform.position;
         }
     }
 }

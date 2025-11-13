@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,36 +11,40 @@ public class PlayerController : MonoBehaviour, ISkillObserver<GameObject>
 {
     [SerializeField] Transform headTransform;
     private float velocityY;
-    [Header("ÀÌµ¿")]
+    [Header("ì´ë™")]
     [SerializeField]
     [Range(1, 5)] private float breakForce = 1f;
-    [SerializeField] private Skill_Punch skill_Punch;
+    [SerializeField] private SkillPunch skillPunch;
+    [SerializeField] private Transform weaponPos;
+    private SkillSweater _skillSweater;
 
-    // ÄÄÆ÷³ÍÆ® Ä³½Ì
-    private Animator animator;
-    private PlayerInput playerInput;
+    // ì»´í¬ë„ŒíŠ¸ ìºì‹±
+    private Animator _animator;
+    private PlayerInput _playerInput;
     private CharacterController cc;
 
 
-    // »óÅÂ Á¤º¸
+    // ìƒíƒœ ì •ë³´
     private Dictionary<EPlayerState, ICharacterState> states;
     private List<ISkillObserver<GameObject>> observers = new List<ISkillObserver<GameObject>>();
     public EPlayerState State { get; private set; }
     public float BreakForce => breakForce;
+    public bool IsWeaponEquip { get; private set; }
 
     private void Awake()
     {
-        // ÄÄÆ÷³ÍÆ® ÃÊ±âÈ­
-        animator = GetComponent<Animator>();
-        playerInput = GetComponent<PlayerInput>();
+        // ì»´í¬ë„ŒíŠ¸ ì´ˆê¸°í™”
+        _animator = GetComponent<Animator>();
+        _playerInput = GetComponent<PlayerInput>();
         cc = GetComponent<CharacterController>();
 
-        // »óÅÂ °´Ã¼ ÃÊ±âÈ­
-        var playerStateIdle = new PlayerStateIdle(this, animator, playerInput);
-        var playerStateMove = new PlayerStateMove(this, animator, playerInput, cc);
-        var playerStateAttack = new PlayerStateAttack(this, animator, playerInput);
-        var playerStateHit = new PlayerStateHit(this, animator, playerInput);
-        var playerStateDead = new PlayerStateDead(this, animator, playerInput);
+        // ìƒíƒœ ê°ì²´ ì´ˆê¸°í™”
+        var playerStateIdle = new PlayerStateIdle(this, _animator, _playerInput);
+        var playerStateMove = new PlayerStateMove(this, _animator, _playerInput, cc);
+        var playerStateAttack = new PlayerStateAttack(this, _animator, _playerInput);
+        var playerStateHit = new PlayerStateHit(this, _animator, _playerInput);
+        var playerStateDead = new PlayerStateDead(this, _animator, _playerInput);
+        SetWeaponEquip(false);
 
         states = new Dictionary<EPlayerState, ICharacterState>
         {
@@ -51,25 +55,27 @@ public class PlayerController : MonoBehaviour, ISkillObserver<GameObject>
             { EPlayerState.Dead, playerStateDead },
         };
 
-        // »óÅÂ ÃÊ±âÈ­
+        StageManager.OnGameClear += () => _animator.SetTrigger(PlayerAniParamVictory);
+
+        // ìƒíƒœ ì´ˆê¸°í™”
         SetState(EPlayerState.Idle);
 
-        //Cursor ¼û±â±â
-        playerInput.actions["Cursor"].performed += (value) => GameManager.Instance.SetCursorLock();
+        //Cursor ìˆ¨ê¸°ê¸°
+        _playerInput.actions["Cursor"].performed += (value) => GameManager.Instance.SetCursorLock();
     }
 
     private void Start()
     {
-        skill_Punch.Subscribe(this);
+        skillPunch.Subscribe(this);
     }
 
     private void OnEnable()
     {
-        // Ä«¸Ş¶ó ÃÊ±âÈ­
-        playerInput.camera = Camera.main;
-        if (playerInput.camera != null)
+        // ì¹´ë©”ë¼ ì´ˆê¸°í™”
+        _playerInput.camera = Camera.main;
+        if (_playerInput.camera != null)
         {
-            playerInput.camera.GetComponent<CameraController>().SetTarget(headTransform, playerInput);
+            _playerInput.camera.GetComponent<CameraController>().SetTarget(headTransform, _playerInput);
         }
     }
 
@@ -84,6 +90,8 @@ public class PlayerController : MonoBehaviour, ISkillObserver<GameObject>
 
     private void Update()
     {
+        if (GameManager.Instance.GameState != EGameState.Play) return;
+
         if (State != EPlayerState.None)
         {
             states[State].Update();
@@ -95,13 +103,32 @@ public class PlayerController : MonoBehaviour, ISkillObserver<GameObject>
         var enemyController = value.GetComponent<EnemyController>();
         if (enemyController)
         {
-            enemyController.SetHit(30);
+            int dmg = IsWeaponEquip ? 60 : 30;
+            enemyController.SetHit(dmg);
         }
+    }
+
+    public void SetWeaponEquip(bool isEquip)
+    {
+        IsWeaponEquip = isEquip;
     }
 
     public void Punch()
     {
-        skill_Punch.PerformAttack();
+        StartCoroutine(skillPunch.PerformAttack());
+    }
+
+    public void Swing()
+    {
+        StartCoroutine(_skillSweater.PerformAttack());
+    }
+
+    public void EquipWeapon(GameObject weaponObj)
+    {
+        weaponObj.transform.SetParent(weaponPos);
+        SetWeaponEquip(true);
+        _skillSweater = weaponObj.GetComponent<SkillSweater>();
+        _skillSweater.Subscribe(this);
     }
 
     public void OnCompleted()

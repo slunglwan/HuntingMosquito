@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 public class MosquitoObjectPool : MonoBehaviour
@@ -8,7 +8,7 @@ public class MosquitoObjectPool : MonoBehaviour
     private Queue<GameObject> pool = new Queue<GameObject>();
 
     /// <summary>
-    /// Object Pool¿¡ »õ·Î¿î ¿ÀºêÁ§Æ® »ı¼º ¸Ş¼­µå
+    /// Object Poolì— ìƒˆë¡œìš´ ì˜¤ë¸Œì íŠ¸ ìƒì„± ë©”ì„œë“œ
     /// </summary>
     private void CreateNewObject()
     {
@@ -17,9 +17,9 @@ public class MosquitoObjectPool : MonoBehaviour
     }
 
     /// <summary>
-    /// ¿ÀºêÁ§Æ® Ç®¿¡ ÀÖ´Â ¿ÀºêÁ§Æ® ¹İÈ¯ ¸Ş¼­µå
+    /// ì˜¤ë¸Œì íŠ¸ í’€ì— ìˆëŠ” ì˜¤ë¸Œì íŠ¸ ë°˜í™˜ ë©”ì„œë“œ
     /// </summary>
-    /// <returns>¿ÀºêÁ§Æ® Ç®¿¡ ÀÖ´Â ¿ÀºêÁ§Æ®</returns>
+    /// <returns>ì˜¤ë¸Œì íŠ¸ í’€ì— ìˆëŠ” ì˜¤ë¸Œì íŠ¸</returns>
     public GameObject GetObject()
     {
         if (pool.Count == 0) CreateNewObject();
@@ -30,9 +30,9 @@ public class MosquitoObjectPool : MonoBehaviour
     }
 
     /// <summary>
-    /// »ç¿ëÇÑ ¿ÀºêÁ§Æ®¸¦ ¿ÀºêÁ§Æ® Ç®·Î µÇµ¹·Á ÁÖ´Â ¸Ş¼­µå
+    /// ì‚¬ìš©í•œ ì˜¤ë¸Œì íŠ¸ë¥¼ ì˜¤ë¸Œì íŠ¸ í’€ë¡œ ë˜ëŒë ¤ ì£¼ëŠ” ë©”ì„œë“œ
     /// </summary>
-    /// <param name="returnObject">¹İÈ¯ÇÒ ¿ÀºêÁ§Æ®</param>
+    /// <param name="returnObject">ë°˜í™˜í•  ì˜¤ë¸Œì íŠ¸</param>
     public void ReturnObject(GameObject returnObject)
     {
         returnObject.SetActive(false);

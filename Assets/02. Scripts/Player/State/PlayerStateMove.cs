@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.InputSystem;
 using static Constants;
 
@@ -6,7 +6,7 @@ public class PlayerStateMove : PlayerState, ICharacterState
 {
     private float moveSpeed;
     private float minSpeed = 3f;
-    private float maxSpeed = 9f;
+    private float maxSpeed = 12f;
     private float acceleration = 0.1f;
     private float velocityY;
     private CharacterController cc;
@@ -19,28 +19,28 @@ public class PlayerStateMove : PlayerState, ICharacterState
 
     public void Enter()
     {
-        animator.SetBool(PlayerAniParamMove, true);
+        _animator.SetBool(PlayerAniParamMove, true);
 
-        // Player Input¿¡ ´ëÇÑ ¾×¼Ç ÇÒ´ç
-        playerInput.actions["Attack"].performed += Attack;
+        // Player Inputì— ëŒ€í•œ ì•¡ì…˜ í• ë‹¹
+        _playerInput.actions["Attack"].performed += Attack;
 
-        // moveSpeed ÃÊ±âÈ­
+        // moveSpeed ì´ˆê¸°í™”
         moveSpeed = minSpeed;
     }
 
     public void Exit()
     {
-        // Move ¾Ö´Ï¸ŞÀÌ¼Ç Á¾·á
-        animator.SetBool(PlayerAniParamMove, false);
+        // Move ì• ë‹ˆë©”ì´ì…˜ ì¢…ë£Œ
+        _animator.SetBool(PlayerAniParamMove, false);
 
-        // Player Input¿¡ ´ëÇÑ ¾×¼Ç ÇØÁ¦
-        playerInput.actions["Attack"].performed -= Attack;
+        // Player Inputì— ëŒ€í•œ ì•¡ì…˜ í•´ì œ
+        _playerInput.actions["Attack"].performed -= Attack;
     }
 
     public void Update()
     {
-        // Ä³¸¯ÅÍ ¹æÇâ ¼³Á¤
-        var moveVector = playerInput.actions["Move"].ReadValue<Vector2>();
+        // ìºë¦­í„° ë°©í–¥ ì„¤ì •
+        var moveVector = _playerInput.actions["Move"].ReadValue<Vector2>();
 
         if (moveVector != Vector2.zero)
         {
@@ -52,11 +52,11 @@ public class PlayerStateMove : PlayerState, ICharacterState
         }
         else
         {
-            playerController.SetState(EPlayerState.Idle);
+            _playerController.SetState(EPlayerState.Idle);
         }
 
-        // ÀÌµ¿ ½ºÇÇµå ¼³Á¤
-        var isRun = playerInput.actions["Run"].IsPressed();
+        // ì´ë™ ìŠ¤í”¼ë“œ ì„¤ì •
+        var isRun = _playerInput.actions["Run"].IsPressed();
         if (isRun && moveSpeed < maxSpeed)
         {
             moveSpeed += acceleration;
@@ -64,17 +64,17 @@ public class PlayerStateMove : PlayerState, ICharacterState
         }
         else if (!isRun && moveSpeed > minSpeed)
         {
-            moveSpeed -= acceleration * playerController.BreakForce;
+            moveSpeed -= acceleration * _playerController.BreakForce;
             moveSpeed = Mathf.Clamp(moveSpeed, minSpeed, maxSpeed);
         }
-        animator.SetFloat(PlayerAniParamMoveSpeed, moveSpeed);
+        _animator.SetFloat(PlayerAniParamMoveSpeed, moveSpeed);
     }
 
     private Vector3 MoveDirection(float x, float z)
     {
-        if (playerInput.camera != null)
+        if (_playerInput.camera != null)
         {
-            var cameraTransform = playerInput.camera.transform;
+            var cameraTransform = _playerInput.camera.transform;
             var cameraForward = cameraTransform.forward;
             var cameraRight = cameraTransform.right;
 

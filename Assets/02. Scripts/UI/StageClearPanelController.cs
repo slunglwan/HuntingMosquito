@@ -1,4 +1,4 @@
-using DG.Tweening;
+﻿using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,12 +10,12 @@ public class StageClearPanelController : MonoBehaviour
     [SerializeField] Button goToMainButton;
     [SerializeField] Button quitButton;
 
-    private CanvasGroup canvasGroup;
+    private CanvasGroup _canvasGroup;
 
     private void Awake()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-        canvasGroup.alpha = 0f;
+        _canvasGroup = GetComponent<CanvasGroup>();
+        _canvasGroup.alpha = 0f;
     }
 
     private void OnEnable()
@@ -44,11 +44,11 @@ public class StageClearPanelController : MonoBehaviour
 
     public void Show(Action onComplete = null)
     {
-        canvasGroup.DOFade(1f, 0.2f).OnComplete(() => onComplete?.Invoke());
+        _canvasGroup.DOFade(1f, 0.2f).OnComplete(() => onComplete?.Invoke());
     }
 
     public void Hide(Action onComplete = null)
     {
-        canvasGroup.DOFade(0f, 0.2f).OnComplete(() => onComplete?.Invoke());
+        _canvasGroup.DOFade(0f, 0.2f).OnComplete(() => onComplete?.Invoke());
     }
 }

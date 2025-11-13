@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,15 +17,15 @@ public class CameraController : MonoBehaviour
     {
         if (target != null)
         {
-            // ¸¶¿ì½º x, y °ªÀ» ÀÌ¿ëÇÏ¿© Ä«¸Ş¶ó ÀÌµ¿
-            azimuthAngle += lookVector.x * rotationSpeed * Time.deltaTime;
+            // ë§ˆìš°ìŠ¤ x, y ê°’ì„ ì´ìš©í•˜ì—¬ ì¹´ë©”ë¼ ì´ë™
+            azimuthAngle -= lookVector.x * rotationSpeed * Time.deltaTime;
             polarAngle -= lookVector.y * rotationSpeed * Time.deltaTime;
             polarAngle = Mathf.Clamp(polarAngle, -20f, 60f);
 
-            // º® °¨Áö
+            // ë²½ ê°ì§€
             var currentDistance = AdjustCameraDistance();
 
-            // Ä«¸Ş¶ó À§Ä¡ ¼³Á¤
+            // ì¹´ë©”ë¼ ìœ„ì¹˜ ì„¤ì •
             var cartesianPosition = GetCameraPosition(currentDistance, polarAngle, azimuthAngle);
             transform.position = target.position - cartesianPosition;
             transform.LookAt(target);
@@ -36,12 +36,12 @@ public class CameraController : MonoBehaviour
     {
         this.target = target;
 
-        // Ä«¸Ş¶ó ÃÊ±â À§Ä¡ ¼³Á¤
+        // ì¹´ë©”ë¼ ì´ˆê¸° ìœ„ì¹˜ ì„¤ì •
         var cartesianPosition = GetCameraPosition(distance, polarAngle, azimuthAngle);
         transform.position = target.position - cartesianPosition;
         transform.LookAt(target);
 
-        // ¸¶¿ì½º ÀÌµ¿ 
+        // ë§ˆìš°ìŠ¤ ì´ë™ 
         playerInput.actions["Look"].performed += OnActionLook;
         playerInput.actions["Look"].canceled += OnActionLook;
     }

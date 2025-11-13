@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using static Constants;
 
@@ -9,7 +9,8 @@ public class PlayerStateAttack : PlayerState, ICharacterState
 
     public void Enter()
     {
-        animator.SetTrigger(PlayerAniParamAttack);
+        if(!_playerController.IsWeaponEquip) _animator.SetTrigger(PlayerAniParamPunch);
+        else _animator.SetTrigger(PlayerAniParamSwing);
     }
 
     public void Exit()
