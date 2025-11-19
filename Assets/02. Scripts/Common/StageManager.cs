@@ -7,20 +7,25 @@ public class StageManager : MonoBehaviour
 {
     [SerializeField] private StageInfo _stageInfo;
     [SerializeField] private MosquitoObjectPool pool;
-    [SerializeField] private GameObject player;
+    [SerializeField] private Transform spawnPoint;
     [SerializeField] private float corpseKeepTime = 3f;
     [SerializeField] private float totalSpawnTime = 1f;
     [SerializeField] private LayerMask groundLayerMask;
     [SerializeField] private LayerMask obstacleLayerMask;
     [SerializeField] private TextMeshProUGUI remainedMosquitoCountTxt;
     [SerializeField] private TextMeshProUGUI killCountTxt;
+    private GameObject _player;
     private int _killCount;
     private bool _isCleared;
 
-    public static System.Action OnGameClear;
+    public static System.Action OnStageClear;
 
-    private void Awake()
+    public void StageStart(GameObject player)
     {
+        _player = player;
+        _player.SetActive(true);
+        _player.transform.position = spawnPoint.transform.position;
+
         _killCount = 0;
         _isCleared = false;
         int remainedMosquitoCount = Mathf.Clamp(_stageInfo.RequiredMosquitoCount - _killCount, 0, _stageInfo.RequiredMosquitoCount);
@@ -42,8 +47,8 @@ public class StageManager : MonoBehaviour
 
     private Vector3 GetValidSpawnPosition()
     {
-        Vector3 playerPos = player.transform.position;
-        Vector3 playerForward = player.transform.forward;
+        Vector3 playerPos = _player.transform.position;
+        Vector3 playerForward = _player.transform.forward;
 
 
         Vector2 mapMin = _stageInfo.mapMin;
@@ -127,7 +132,7 @@ public class StageManager : MonoBehaviour
         if (_killCount >= _stageInfo.RequiredMosquitoCount && !_isCleared)
         {
             _isCleared = true ;
-            OnGameClear?.Invoke();
+            OnStageClear?.Invoke();
             GameManager.Instance.GameClear();
             Debug.Log("Stage Clear!");
         }

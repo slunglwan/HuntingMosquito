@@ -41,7 +41,7 @@ public static class Constants
     /// </summary>
     public enum EPlayerState
     {
-        None, Idle, Move, Attack, Hit, Dead
+        None, Idle, Move, Attack, Hit, Dead, Victory
     }
 
     /// <summary>

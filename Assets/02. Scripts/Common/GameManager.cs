@@ -6,7 +6,8 @@ using static Constants;
 
 public class GameManager : Singleton<GameManager>
 {
-    //[SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject playerPrefab;
+    private GameObject _player;
 
     public EGameState GameState { get; private set; }
 
@@ -14,6 +15,13 @@ public class GameManager : Singleton<GameManager>
     private Canvas canvas;
     private bool isCursorLock;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        _player = Instantiate(playerPrefab);
+        DontDestroyOnLoad(_player);
+        _player.SetActive(false);
+    }
 
     public void SetCursorLock()
     {
@@ -52,7 +60,7 @@ public class GameManager : Singleton<GameManager>
     {
         // 로딩 화면 띄우기
         var loadingPanelPrefab = Resources.Load<GameObject>("[Panel] Loading");
-        var loadingPanelObject = Instantiate(loadingPanelPrefab, canvas.transform);
+        var loadingPanelObject = Instantiate(loadingPanelPrefab, GetCanvas().transform);
         var loadingPanelController = loadingPanelObject.GetComponent<LoadingPanelController>();
 
 
@@ -88,10 +96,15 @@ public class GameManager : Singleton<GameManager>
         switch (scene.name)
         {
             case "Main":
+                _player.SetActive(false);
                 break;
             default:
                 var startPanelPrefab = Resources.Load<GameObject>("[Panel] Start");
                 var startPanelObj = Instantiate(startPanelPrefab, canvas.transform);
+                var stageManager = GameObject.FindGameObjectWithTag("StageManager");
+                stageManager.GetComponent<StageManager>().StageStart(_player);
+                _player.GetComponent<PlayerController>().SetCamera();
+                _player.GetComponent<PlayerController>().UnEquipWeapon();
                 break;
         }
     }
@@ -122,6 +135,6 @@ public class GameManager : Singleton<GameManager>
 
     protected override void OnSceneUnloaded(Scene scene)
     {
-        //player.SetActive(false);
+        //_player.SetActive(false);
     }
 }

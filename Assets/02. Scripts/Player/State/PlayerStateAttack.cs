@@ -15,7 +15,8 @@ public class PlayerStateAttack : PlayerState, ICharacterState
 
     public void Exit()
     {
-
+        // Player Input에 대한 액션 해제
+        _playerInput.actions["Attack"].performed -= Attack;
     }
 
     public void Update()

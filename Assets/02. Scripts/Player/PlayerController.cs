@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour, ISkillObserver<GameObject>
     [Header("이동")]
     [SerializeField]
     [Range(1, 5)] private float breakForce = 1f;
-    [SerializeField] private SkillPunch skillPunch;
+    private SkillPunch _skillPunch;
     [SerializeField] private Transform weaponPos;
     private SkillSweater _skillSweater;
 
@@ -44,6 +44,7 @@ public class PlayerController : MonoBehaviour, ISkillObserver<GameObject>
         var playerStateAttack = new PlayerStateAttack(this, _animator, _playerInput);
         var playerStateHit = new PlayerStateHit(this, _animator, _playerInput);
         var playerStateDead = new PlayerStateDead(this, _animator, _playerInput);
+        var playerStateVictory = new PlayerStateVictory(this, _animator, _playerInput);
         SetWeaponEquip(false);
 
         states = new Dictionary<EPlayerState, ICharacterState>
@@ -53,9 +54,10 @@ public class PlayerController : MonoBehaviour, ISkillObserver<GameObject>
             { EPlayerState.Attack, playerStateAttack },
             { EPlayerState.Hit, playerStateHit },
             { EPlayerState.Dead, playerStateDead },
+            { EPlayerState.Victory, playerStateVictory },
         };
 
-        StageManager.OnGameClear += () => _animator.SetTrigger(PlayerAniParamVictory);
+        StageManager.OnStageClear += () => SetState(EPlayerState.Victory);
 
         // 상태 초기화
         SetState(EPlayerState.Idle);
@@ -66,10 +68,11 @@ public class PlayerController : MonoBehaviour, ISkillObserver<GameObject>
 
     private void Start()
     {
-        skillPunch.Subscribe(this);
+        _skillPunch = GetComponentInChildren<SkillPunch>();
+        _skillPunch.Subscribe(this);
     }
 
-    private void OnEnable()
+    public void SetCamera()
     {
         // 카메라 초기화
         _playerInput.camera = Camera.main;
@@ -115,7 +118,7 @@ public class PlayerController : MonoBehaviour, ISkillObserver<GameObject>
 
     public void Punch()
     {
-        StartCoroutine(skillPunch.PerformAttack());
+        StartCoroutine(_skillPunch.PerformAttack());
     }
 
     public void Swing()
@@ -128,7 +131,18 @@ public class PlayerController : MonoBehaviour, ISkillObserver<GameObject>
         weaponObj.transform.SetParent(weaponPos);
         SetWeaponEquip(true);
         _skillSweater = weaponObj.GetComponent<SkillSweater>();
-        _skillSweater.Subscribe(this);
+        _skillSweater.Subscribe(this);        
+    }
+
+    public void UnEquipWeapon()
+    {
+        if(_skillSweater != null)
+        {
+            _skillSweater.UnSubscribe(this);
+            Destroy(_skillSweater.gameObject);
+            _skillSweater = null;
+            SetWeaponEquip(false);
+        }
     }
 
     public void OnCompleted()

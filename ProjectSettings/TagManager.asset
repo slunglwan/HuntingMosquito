@@ -6,6 +6,7 @@ TagManager:
   tags:
   - BugPool
   - Canvas
+  - StageManager
   layers:
   - Default
   - TransparentFX

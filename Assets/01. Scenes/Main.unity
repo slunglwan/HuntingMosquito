@@ -3198,7 +3198,7 @@ GameObject:
   - component: {fileID: 918706602}
   - component: {fileID: 918706601}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: MainCanvas
   m_TagString: Canvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5440,6 +5440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 694410c3929a1b34b9a9130fd727404f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  playerPrefab: {fileID: 7118066050417644592, guid: b1765d4367979394aad15d4766965d98, type: 3}
 --- !u!4 &1803853527
 Transform:
   m_ObjectHideFlags: 0
